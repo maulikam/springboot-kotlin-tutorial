@@ -1,6 +1,8 @@
 package com.github.maulikam.springboot_kotlin_tutorial
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,6 +36,19 @@ class ArticleController {
     fun updateArticle(@RequestBody article: Article, @PathVariable title: String) : Article {
         val existingArticle = articles.find { it.title == title } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         existingArticle.content = article.content
+        return article
+    }
+
+    @DeleteMapping("/{title}")
+    fun deleteArticle(@PathVariable title: String) : ResponseEntity<Void> {
+        val isRemoved = articles.removeIf { article -> article.title == title}
+
+        return if (isRemoved) {
+            ResponseEntity(HttpStatus.NO_CONTENT)
+        } else {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        }
+
     }
 
 }
