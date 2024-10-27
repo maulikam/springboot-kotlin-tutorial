@@ -22,9 +22,9 @@ class ArticleController {
     @GetMapping
     fun articles() = articles
 
-    @GetMapping("/{title}")
-    fun articles(@PathVariable title : String) =
-        articles.find { article -> article.title == title } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    @GetMapping("/{slug}")
+    fun articles(@PathVariable slug : String) =
+        articles.find { article -> article.slug == slug } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
     @PostMapping
     fun newArticle(@RequestBody article: Article) : Article {
@@ -32,16 +32,17 @@ class ArticleController {
         return article
     }
 
-    @PutMapping("/{title}")
-    fun updateArticle(@RequestBody article: Article, @PathVariable title: String) : Article {
-        val existingArticle = articles.find { it.title == title } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    @PutMapping("/{slug}")
+    fun updateArticle(@RequestBody article: Article, @PathVariable slug: String) : Article {
+        val existingArticle = articles.find { it.slug == slug } ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         existingArticle.content = article.content
+        existingArticle.title = article.title
         return article
     }
 
-    @DeleteMapping("/{title}")
-    fun deleteArticle(@PathVariable title: String) : ResponseEntity<Void> {
-        val isRemoved = articles.removeIf { article -> article.title == title}
+    @DeleteMapping("/{slug}")
+    fun deleteArticle(@PathVariable slug: String) : ResponseEntity<Void> {
+        val isRemoved = articles.removeIf { article -> article.slug == slug}
 
         return if (isRemoved) {
             ResponseEntity(HttpStatus.NO_CONTENT)
